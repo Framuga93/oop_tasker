@@ -30,8 +30,12 @@ public class UserController {
         return repository.getAllTask();
     }
 
+    public void deleteTask(String taskId){
+        repository.deleteTask(taskId);
+
+    }
+
     public void updateTask(Task task){
         repository.updateTask(task);
-
     }
 }

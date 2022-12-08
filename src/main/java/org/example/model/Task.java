@@ -70,6 +70,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task ID: %s\nTask: %s\nDate start Task: %s\nDeadline: %s\nPriority: %s",id,taskText,date,deadLine,priority);
+        return String.format("Task ID: %s\nTask: %s\nDate start Task: %s\nDeadline: %s\nPriority: %s\n------------------",id,taskText,date,deadLine,priority);
     }
 }

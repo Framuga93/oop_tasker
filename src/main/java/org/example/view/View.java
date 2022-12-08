@@ -13,10 +13,10 @@ import java.util.Scanner;
 
 public class View {
 
-    private UserController userController;
-    private UserMapper mapper = new UserMapper();
+    private final UserController userController;
+    private final UserMapper mapper = new UserMapper();
 
-    private PriorityStatus priorityStatus = new PriorityStatus();
+    private final PriorityStatus priorityStatus = new PriorityStatus();
 
     public View(UserController userController) {
         this.userController = userController;
@@ -29,8 +29,8 @@ public class View {
                 String command = prompt("Enter command: ");
                 com = Commands.valueOf(command.toUpperCase());
             }catch (Exception e){
-                throw new IllegalStateException("Unknow command");
-            };
+                throw new IllegalStateException("Unknown command");
+            }
         if (com == Commands.EXIT) return;
         switch (com) {
             case CREATE:
@@ -55,10 +55,26 @@ public class View {
                 break;
             case UPDATE:
                 try {
+                    id = prompt("Enter Task ID to update: ");
                     List<String> data = getData();
-                    userController.updateTask(new Task(data.get(0), data.get(1), data.get(2), data.get(3)));
+                    userController.updateTask(new Task(id,data.get(0), data.get(1), data.get(2), data.get(3)));
+                    break;
                 }catch (Exception e) {
                     throw new IllegalStateException("User not found");
+                }
+            case DELETE:
+                id = prompt("Enter task ID to delete: ");
+                try {
+                    userController.readTask(id);
+                }catch (Exception e){
+                    throw new IllegalStateException("Task not found");
+                }
+                String answ = prompt("Are you sure?\nYES\nNO: ");
+                if (answ.equalsIgnoreCase("YES")){
+                    userController.deleteTask(id);
+            }
+                if (answ.equalsIgnoreCase("NO")){
+                    break;
                 }
         }
         }
