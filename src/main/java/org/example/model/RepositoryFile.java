@@ -5,10 +5,8 @@ import java.util.List;
 
 public class RepositoryFile implements Repository{
 
-    private TaskMapper taskMapper = new TaskMapper();
+    private UserMapper mapper = new UserMapper();
     private FileOperation fileOperation;
-
-    private PriorityStatus priorityStatus;
 
     public RepositoryFile(FileOperation fileOperation){
         this.fileOperation = fileOperation;
@@ -18,7 +16,7 @@ public class RepositoryFile implements Repository{
     public List<Task> getAllTask() {
         List<String> lines = fileOperation.readAllLines();
         List<Task> tasks = new ArrayList<>();
-        lines.forEach(l->tasks.add(taskMapper.map(l)));
+        lines.forEach(l->tasks.add(mapper.map(l)));
         return tasks;
     }
 
@@ -35,29 +33,22 @@ public class RepositoryFile implements Repository{
         int newId = max + 1;
         String id = String.format("%d", newId);
         task.setId(id);
-//        Priority priority = priorityStatus.GetPriorityStatus(task.getDate(),task.getDeadLine());
-        long dateDiff = task.getDeadLine().getTime() - task.getDate().getTime();
-        int hours = (int) (dateDiff / (60 * 60 * 1000));
-        if (hours < 3){
-            task.setPriority(Priority.HIGH);
-        }
-        if (hours < 10){
-            task.setPriority(Priority.MIDDLE);
-        }
-        task.setPriority(Priority.LOW);
-//        task.setPriority(priority);
         saveTask(task,tasks);
         return id;
     }
 
     @Override
     public void deleteTask(String taskId) {
-
+    List<Task> tasks = getAllTask();
+    tasks.remove(findTask(taskId,tasks));
+    saveTasks(tasks);
     }
 
     @Override
     public void updateTask(Task task) {
-
+    deleteTask(task.getId());
+    List<Task> tasks = getAllTask();
+    saveTask(task,tasks);
     }
 
     private void saveTask(Task task, List<Task> tasks){
@@ -65,12 +56,21 @@ public class RepositoryFile implements Repository{
         saveTasks(tasks);
     }
 
-    private void saveTasks(List<Task> tasks){//list task ов
+    private void saveTasks(List<Task> tasks){
         List<String> lines = new ArrayList<>();
         for (Task task : tasks){
-            lines.add(taskMapper.map(task));
+            lines.add(mapper.map(task));
         }
         fileOperation.saveAllLines(lines);
+    }
+
+    private Task findTask(String taskId, List<Task> tasks){
+        for (Task task : tasks) {
+            if (task.getId().equals(taskId)) {
+                return task;
+            }
+        }
+        throw new IllegalStateException("User not found");
     }
 
 }

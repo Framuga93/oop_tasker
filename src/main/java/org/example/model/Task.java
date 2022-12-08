@@ -1,40 +1,31 @@
 package org.example.model;
 
-import java.util.Date;
-
 
 public class Task {
 
-    private TaskMapper taskMapper = new TaskMapper();
+    private UserMapper mapper = new UserMapper();
 
     private String id = "";
 
     private String taskText;
 
-    private Date date;
+    private String date;
 
-    private Date deadLine;
+    private String deadLine;
 
-    private Priority priority;
+    private String priority;
 
-    public Task(String taskText,Date date,Date deadLine) {
+    public Task(String taskText,String date,String deadLine,String priority) {
         this.taskText = taskText;
         this.deadLine = deadLine;
         this.date = date;
-    }
-
-    public Task(String id, String taskText, Date date,Date deadLine, Priority priority){
-        this(taskText,date,deadLine);
-        this.id = id;
         this.priority = priority;
     }
 
     public Task(String id, String taskText, String date, String deadLine, String priority) {
+        this(taskText,deadLine,date,priority);
         this.id = id;
-        this.taskText = taskText;
-        this.deadLine = taskMapper.deadLineMap(deadLine);
-        this.date = taskMapper.deadLineMap(date);
-        this.priority = Priority.valueOf(priority);
+
     }
 
     public String getId() {
@@ -53,27 +44,27 @@ public class Task {
         this.taskText = taskText;
     }
 
-    public Priority getPriority() {
+    public String getPriority() {
         return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public Date getDeadLine() {
+    public String getDeadLine() {
         return deadLine;
     }
 
-    public void setDeadLine(Date deadLine) {
+    public void setDeadLine(String deadLine) {
         this.deadLine = deadLine;
     }
 

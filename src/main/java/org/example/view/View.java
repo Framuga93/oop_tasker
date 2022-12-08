@@ -1,18 +1,22 @@
 package org.example.view;
 
 import org.example.controller.UserController;
+import org.example.model.Priority;
+import org.example.model.PriorityStatus;
 import org.example.model.Task;
-import org.example.model.TaskMapper;
+import org.example.model.UserMapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class View {
 
     private UserController userController;
-    private TaskMapper taskMapper;
+    private UserMapper mapper = new UserMapper();
+
+    private PriorityStatus priorityStatus = new PriorityStatus();
 
     public View(UserController userController) {
         this.userController = userController;
@@ -21,22 +25,20 @@ public class View {
     public void run(){
         Commands com = Commands.NONE;
         while (true){
-        String command = prompt("Enter command: ");
-        com = Commands.valueOf(command.toUpperCase());
+            try {
+                String command = prompt("Enter command: ");
+                com = Commands.valueOf(command.toUpperCase());
+            }catch (Exception e){
+                throw new IllegalStateException("Unknow command");
+            };
         if (com == Commands.EXIT) return;
         switch (com) {
             case CREATE:
                 try {
-                    String taskText = prompt("Task text: ");
-                    String stdeadLine = prompt("Deadline: ");
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-                    Date deadLine = dateFormat.parse("11.12.2022");
-//                    Date deadLine = taskMapper.deadLineMap(stdeadLine);
-                    Date dateNowN = new Date();
-                    Date dateNow = dateFormat.parse(dateNowN);
-                    userController.saveTask(new Task(taskText, dateNow, deadLine));
-                } catch (IllegalStateException | ParseException e) {
-                    System.out.println(e.getMessage());
+                    List<String> data = getData();
+                    userController.saveTask(new Task(data.get(0), data.get(1), data.get(2), data.get(3)));
+                } catch (Exception e) {
+                    throw new IllegalStateException("Incorrect data");
                 }
                 break;
             case READ:
@@ -45,7 +47,7 @@ public class View {
                     Task task = userController.readTask(id);
                     System.out.println(task);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalStateException("User not found");
                 }
                 break;
             case LIST:
@@ -53,25 +55,35 @@ public class View {
                 break;
             case UPDATE:
                 try {
-                    String taskText = prompt("Task text: ");
-                    String stdeadLine = prompt("Deadline: ");
-                    Date deadLine = taskMapper.deadLineMap(stdeadLine);
-                    Date dateNow = new Date();
-                    userController.saveTask(new Task(taskText, dateNow, deadLine));
-                } catch (Exception e) {
-                    throw new RuntimeException();
+                    List<String> data = getData();
+                    userController.updateTask(new Task(data.get(0), data.get(1), data.get(2), data.get(3)));
+                }catch (Exception e) {
+                    throw new IllegalStateException("User not found");
                 }
         }
         }
 
 
     }
-
     private String prompt(String message) {
         Scanner in = new Scanner(System.in);
         System.out.print(message);
         return in.nextLine();
     }
 
+    private List<String> getData(){
+        List<String> data = new ArrayList<>();
+        String taskText = prompt("Task text: ");
+        String deadLineStr = prompt("Deadline format dd.MM.yyyy : ");
+        Date deadLine = mapper.dateMap(deadLineStr);
+        Date dateNowN = new Date();
+        Priority priority = priorityStatus.GetPriorityStatus(dateNowN,deadLine);
+        String dateNow = mapper.dateMap(dateNowN);
+        data.add(taskText);
+        data.add(dateNow);
+        data.add(deadLineStr);
+        data.add(String.valueOf(priority));
+        return data;
+    }
 
 }

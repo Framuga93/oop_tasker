@@ -17,11 +17,21 @@ public class UserController {
     }
 
     public Task readTask(String taskId) throws Exception{
-        List<Task> tasks = repository.getAllTask();
+        List<Task> tasks = readTasks();
+        for (Task task: tasks){
+            if (task.getId().equals(taskId)){
+                return task;
+            }
+        }
         throw new Exception("Task not found");
     }
 
     public List<Task> readTasks(){
         return repository.getAllTask();
+    }
+
+    public void updateTask(Task task){
+        repository.updateTask(task);
+
     }
 }

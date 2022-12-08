@@ -1,10 +1,9 @@
 package org.example.model;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TaskMapper {
+public class UserMapper {
 
     public String map(Task task){
         return String.format("%s,%s,%s,%s,%s",task.getId(),task.getTaskText(),
@@ -17,12 +16,21 @@ public class TaskMapper {
         return new Task(lines[0],lines[1],lines[2],lines[3],lines[4]);
     }
 
-    public Date deadLineMap(String date)  {
+    public Date dateMap(String date)  {
         try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             return dateFormat.parse(date);
         }catch (Exception e){
-            throw new IllegalStateException("dl map EX");
+            throw new IllegalStateException("Incorrect format");
+        }
+    }
+
+    public String dateMap(Date date){
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            return dateFormat.format(date);
+        }catch (Exception e){
+            throw new IllegalStateException("Incorrect format");
         }
     }
 }
