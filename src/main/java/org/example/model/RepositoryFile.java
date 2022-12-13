@@ -58,9 +58,7 @@ public class RepositoryFile implements Repository{
 
     private void saveTasks(List<Task> tasks){
         List<String> lines = new ArrayList<>();
-        for (Task task : tasks){
-            lines.add(mapper.map(task));
-        }
+        tasks.forEach(t-> lines.add(mapper.map(t)));
         fileOperation.saveAllLines(lines);
     }
 
