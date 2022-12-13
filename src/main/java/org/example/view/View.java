@@ -34,12 +34,12 @@ public class View {
         if (com == Commands.EXIT) return;
         switch (com) {
             case CREATE:
-                try {
+//                try {
                     List<String> data = getData();
                     userController.saveTask(new Task(data.get(0), data.get(1), data.get(2), data.get(3)));
-                } catch (Exception e) {
-                    throw new IllegalStateException("Incorrect data");
-                }
+//                } catch (Exception e) {
+//                    throw new IllegalStateException("Incorrect data");
+//                }
                 break;
             case READ:
                 String id = prompt("Enter task ID: ");
@@ -56,7 +56,7 @@ public class View {
             case UPDATE:
                 try {
                     id = prompt("Enter Task ID to update: ");
-                    List<String> data = getData();
+                    data = getData();
                     userController.updateTask(new Task(id,data.get(0), data.get(1), data.get(2), data.get(3)));
                     break;
                 }catch (Exception e) {

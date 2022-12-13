@@ -1,56 +1,65 @@
 package org.example.model;
 
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+import au.com.bytecode.opencsv.bean.CsvToBean;
+import au.com.bytecode.opencsv.bean.HeaderColumnNameMappingStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FileOperationCSV implements FileOperation{
-
     private String fileName;
+
 
     public FileOperationCSV(String fileName) {
         this.fileName = fileName;
-        try (FileWriter writer = new FileWriter(fileName, true)) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName,true))) {
             writer.flush();
         } catch (IOException ex) {
-            throw new IllegalStateException("fileop EX");
+            throw new IllegalStateException("fileop EX CSV");
         }
     }
     @Override
     public List<String> readAllLines() {
-        List<String> lines = new ArrayList<>();
-        try {
-            File file = new File(fileName);
-            FileReader fr = new FileReader(file);
-            BufferedReader reader = new BufferedReader(fr);
-            String line = reader.readLine();
-            if (line != null) {
-                lines.add(line);
-            }
-            while (line != null) {
-                line = reader.readLine();
-                if (line != null) {
-                    lines.add(line);
-                }
-            }
-            fr.close();
-        } catch (IOException e) {
-            throw new IllegalStateException("readline EX");
+        try{
+        CSVReader reader = new CSVReader(new FileReader(fileName), ',');
+        HeaderColumnNameMappingStrategy<Task> beanStrategy = new HeaderColumnNameMappingStrategy<>();
+        beanStrategy.setType(Task.class);
+        CsvToBean<Task> csvToBean = new CsvToBean<>();
+        List<Task> tasks = csvToBean.parse(beanStrategy, reader);
+        List<String> taskToString = new ArrayList<>();
+        tasks.forEach(t->taskToString.add(String.valueOf(t)));
+        reader.close();
+        return taskToString;
+        }catch (IOException e) {
+            throw new IllegalStateException("readline EX CSV");
         }
-        return lines;
+
     }
 
     @Override
     public void saveAllLines(List<String> lines) {
-        try (FileWriter writer = new FileWriter(fileName, false)) {
-            for (String line : lines) {
-                writer.write(line);
-                writer.append('\n');
-            }
-            writer.flush();
-        } catch (Exception ex) {
-            throw new IllegalStateException("saveline EX");
+            CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName,false));
+            List<Task> tasks = parseCSVWithHeader(fileName);// enter data
+            List<String[]> data = toStringArray(tasks); // output datd
+            csvWriter.writeAll(data);
+            csvWriter.close();
+
         }
+
+        private static List<String[]> toStringArray(List<Task> tasks) {
+            List<String[]> records = new ArrayList<String[]>();
+            records.add(new String[]{"id","taskText","date","deadline","priority"});
+            Iterator<Task> it = tasks.iterator();
+            while (it.hasNext()) {
+                Task task = it.next();
+                records.add(new String[]{task.getId(), task.getTaskText(), task.getDate(), task.getDeadLine(),task.getPriority()});
+            }
+            return records;
+        }
+
     }
-}
+

@@ -2,6 +2,7 @@ package org.example.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class UserMapper {
 
@@ -11,7 +12,6 @@ public class UserMapper {
     }
 
     public Task map(String line){
-
         String[] lines = line.split(",");
         return new Task(lines[0],lines[1],lines[2],lines[3],lines[4]);
     }

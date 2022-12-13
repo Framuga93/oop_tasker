@@ -2,9 +2,6 @@ package org.example.model;
 
 
 public class Task {
-
-    private UserMapper mapper = new UserMapper();
-
     private String id = "";
 
     private String taskText;
@@ -25,6 +22,10 @@ public class Task {
     public Task(String id, String taskText, String date, String deadLine, String priority) {
         this(taskText,deadLine,date,priority);
         this.id = id;
+
+    }
+
+    public Task() {
 
     }
 
@@ -70,6 +71,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task ID: %s\nTask: %s\nDate start Task: %s\nDeadline: %s\nPriority: %s\n------------------",id,taskText,date,deadLine,priority);
+        return String.format("Task ID: %s\nTask: %s\nDate start Task: %s\nDeadline: %s\nPriority: %s\n------------------\n",id,taskText,date,deadLine,priority);
     }
 }
